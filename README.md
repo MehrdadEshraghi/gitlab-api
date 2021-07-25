@@ -2,10 +2,10 @@ This project was tested with Postman.
 
 ## How To Run?
 
-### npm install
+### `npm install`
 
 Installs project dependencies.<br />
 
-### npm start
+### `npm start`
 
 Starts server
