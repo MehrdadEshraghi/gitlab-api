@@ -8,13 +8,33 @@ let currentUserGitlabId;
 
 app.use(express.urlencoded({ extended: true }));
 
+const createError = (code, str) => {
+	const message = {};
+	if (str) {
+		message.message = str;
+		message.statusCode = code;
+		return message;
+	}
+	const baseStr = 'Request failed with status code ';
+	switch (code) {
+		case 400:
+			message.message = baseStr + '400 Bad Request';
+			break;
+		case 401:
+			message.message = baseStr + '401 Unauthorized';
+			break;
+	}
+	message.statusCode = code;
+	return message;
+};
+
 app.get('/', (req, res) => {
 	res.send('Hello World');
 });
 
 app.get('/projects/:id/repository_tree', async (req, res) => {
 	const userId = req.header('userId');
-	if (userId && userId === currentUserGitlabId) {
+	if (userId && userId === currentUserGitlabId)
 		try {
 			const response = await axios.get(`https://gitlab.com/api/v4/projects/${req.params.id}/repository/tree`, {
 				headers: {
@@ -23,20 +43,19 @@ app.get('/projects/:id/repository_tree', async (req, res) => {
 			});
 			res.status(200).send(response.data);
 		} catch (err) {
-			console.log(err);
-			const message = { statusCode: err.response.status, message: `${err.message} ${err.response.statusText}` };
-			res.status(err.response.status).send(message);
+			res
+				.status(err.response.status)
+				.send(createError(err.response.status, `${err.message} ${err.response.statusText}`));
 		}
-	} else {
-		const message = { statusCode: '400', message: '400 Bad Request' };
-		res.status(400).send(message);
-	}
+	else res.status(400).send(createError(400));
 });
 
 app.post('/token', (req, res) => {
-	currentUserGitlabId = req.body.userId;
-	currentUserGitlabAccessToken = req.body.gitlabAccessToken;
-	res.status(200).send('Got the token');
+	if (req.body.userId && req.body.gitlabAccessToken) {
+		currentUserGitlabId = req.body.userId;
+		currentUserGitlabAccessToken = req.body.gitlabAccessToken;
+		res.status(200).send('Got the token');
+	} else res.status(400).send(createError(400));
 });
 
 app.listen(process.env.PORT || 3000, () => {
