@@ -8,4 +8,4 @@ Installs project dependencies.<br />
 
 ### `npm start`
 
-Starts the server
+Starts the server.
