@@ -24,11 +24,11 @@ app.get('/projects/:id/repository_tree', async (req, res) => {
 			res.status(200).send(response.data);
 		} catch (err) {
 			console.log(err);
-			const message = { message: `${err.message} ${err.response.statusText}` };
+			const message = { statusCode: err.response.status, message: `${err.message} ${err.response.statusText}` };
 			res.status(err.response.status).send(message);
 		}
 	} else {
-		const message = { message: '400 Bad Request' };
+		const message = { statusCode: '400', message: '400 Bad Request' };
 		res.status(400).send(message);
 	}
 });
