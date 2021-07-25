@@ -1,6 +1,11 @@
-This project was tested with Postman
+This project was tested with Postman.
 
 ## How To Run?
 
-Run `npm install` to install project dependencies.
-Run `npm start` to start server.
+### npm install
+
+Installs project dependencies.<br />
+
+### npm start
+
+Starts server
